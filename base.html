@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>know your credit</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="#" onclick="navigate('landing')">Home</a></li>
+            <li><a href="#" onclick="navigate('dashboard')">Dashboard</a></li>
+            <li><a href="#" onclick="navigate('credit-report')">Credit Report</a></li>
+            <li><a href="#" onclick="navigate('bureau-connection')">Bureau Connection</a></li>
+            <li><a href="#" onclick="navigate('loan-eligibility')">Loan Eligibility</a></li>
+            <li><a href="#" onclick="navigate('admin-dashboard')">Admin</a></li>
+        </ul>
+    </nav>
+
+    <section class="landing">
+        <h1>Smarter Credit Decisions</h1>
+        <p>Unify credit data from multiple bureaus and make informed lending decisions.</p>
+        <button onclick="navigate('login')">Login</button>
+        <button onclick="navigate('signup')">Sign Up</button>
+    </section>
+    
+    <section class="dashboard hidden">
+        <h2>Welcome, <span id="username">User</span>!</h2>
+        <p>Your Unified Credit Score: <span class="score">750</span></p>
+        <button onclick="navigate('credit-report')">View Credit Report</button>
+    </section>
+    
+    <section class="credit-report hidden">
+        <h2>Your Credit Report</h2>
+        <p>View your credit history and risk levels.</p>
+        <button>Download Report</button>
+    </section>
+    
+    <section class="bureau-connection hidden">
+        <h2>Connect Your Credit Bureaus</h2>
+        <button onclick="connectBureau('Experian')">Experian</button>
+        <button onclick="connectBureau('Equifax')">Equifax</button>
+        <button onclick="connectBureau('TransUnion')">TransUnion</button>
+    </section>
+
+    <section class="loan-eligibility hidden">
+        <h2>Check Loan Eligibility</h2>
+        <p>Find out if you qualify for a loan.</p>
+        <button>Check Now</button>
+    </section>
+
+    <section class="admin-dashboard hidden">
+        <h2>Admin Panel</h2>
+        <p>Manage users and monitor credit risk.</p>
+    </section>
+
+    <section class="login hidden">
+        <h2>Login</h2>
+        <input type="email" id="login-email" placeholder="Email">
+        <input type="password" id="login-password" placeholder="Password">
+        <button onclick="login()">Login</button>
+    </section>
+
+    <section class="signup hidden">
+        <h2>Sign Up</h2>
+        <input type="text" id="signup-name" placeholder="Full Name">
+        <input type="email" id="signup-email" placeholder="Email">
+        <input type="password" id="signup-password" placeholder="Password">
+        <button onclick="signup()">Sign Up</button>
+    </section>
+
+    <section class="error-404 hidden">
+        <h2>404 - Page Not Found</h2>
+        <p>The page you are looking for doesn't exist.</p>
+        <button onclick="navigate('landing')">Go Home</button>
+    </section>
+
+    <script>
+        function navigate(page) {
+            document.querySelectorAll('section').forEach(sec => sec.classList.add('hidden'));
+            const target = document.querySelector(`.${page}`);
+            if (target) {
+                target.classList.remove('hidden');
+            } else {
+                document.querySelector('.error-404').classList.remove('hidden');
+            }
+        }
+
+        function login() {
+            const email = document.getElementById('login-email').value;
+            if (email) {
+                document.getElementById('username').textContent = email.split('@')[0];
+                navigate('dashboard');
+            }
+        }
+
+        function signup() {
+            const name = document.getElementById('signup-name').value;
+            if (name) {
+                document.getElementById('username').textContent = name;
+                navigate('dashboard');
+            }
+        }
+
+        function connectBureau(name) {
+            alert(`${name} connected successfully!`);
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        nav {
+            background: #007bff;
+            padding: 10px;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+        nav ul li {
+            display: inline;
+            margin-right: 10px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+        section {
+            background: white;
+            padding: 20px;
+            margin: 20px auto;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.5s ease-in-out;
+        }
+        section:not(.hidden) {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .hidden {
+            display: none;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</body>
+</html>
