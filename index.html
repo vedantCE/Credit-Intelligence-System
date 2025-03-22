@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Know Your Credit</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- AOS Library for Animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <!-- Adding Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Animation Library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+</head>
+
+<body>
+    <div class="bg-animation">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
+    
+    <div class="logo-container animate__animated animate__fadeInDown">
+        <img src="logo.jpg" alt="Logo" class="page-logo">
+        <h1 class="brand-name">Know Your Credit</h1>
+    </div>
+    
+    <nav class="animate__animated animate__slideInDown">
+        <div class="watermark">
+            <img src="logo.jpg" alt="Watermark Logo">
+        </div>
+        <div class="hamburger-menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul>
+            <li><a href="#" onclick="navigate('landing')"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="#" onclick="navigate('dashboard')"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+            <li><a href="#" onclick="navigate('loan-eligibility')"><i class="fas fa-check-circle"></i> Loan Eligibility</a></li>
+            <li><a href="#" onclick="navigate('admin-dashboard')"><i class="fas fa-user-shield"></i> Admin</a></li>
+            <li><a href="#" onclick="navigate('customer-credit')"><i class="fas fa-credit-card"></i> Customer Credit</a></li>
+            <li><a href="#" onclick="navigate('help-desk')"><i class="fas fa-headset"></i> Help Desk</a></li>
+        </ul>
+    </nav>
+
+    <section class="help-desk hidden" data-aos="zoom-in">
+        <div class="container glass-effect">
+            <h2 class="section-title"><i class="fas fa-headset"></i> Help Desk</h2>
+            <p>Submit your query, and it will be sent to the support team.</p>
+            <form action="https://formspree.io/f/xjkywbke" method="POST">
+                <div class="input-group">
+                    <label><i class="fas fa-envelope"></i> Your email:</label>
+                    <input type="email" name="email" required>
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-comment-alt"></i> Your message:</label>
+                    <textarea name="message" required></textarea>
+                </div>
+                <button type="submit" class="btn pulse-btn"><i class="fas fa-paper-plane"></i> Send</button>
+            </form>
+        </div>
+    </section>
+
+    <section id="intro" class="landing" data-aos="fade-up">
+        <div class="hero-content">
+            <h1  class="main-heading animate__animated animate__fadeInUp">Smarter Credit Decisions</h1>
+            <p class="sub-heading animate__animated animate__fadeInUp animate__delay-1s">Unify credit data from multiple bureaus and make informed lending decisions.</p>
+            <div class="button-group animate__animated animate__fadeInUp animate__delay-2s">
+                <button onclick="navigate('login')" class="btn glow-btn"><i class="fas fa-sign-in-alt"></i> Login</button>
+                <button onclick="navigate('signup')" class="btn pulse-btn"><i class="fas fa-user-plus"></i> Sign Up</button>
+            </div>
+        </div>
+        <div class="features-carousel">
+            <div class="feature-card">
+                <i class="fas fa-shield-alt feature-icon"></i>
+                <h3>Secure Platform</h3>
+                <p>Bank-level encryption for all your data</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-bolt feature-icon"></i>
+                <h3>Fast Decisions</h3>
+                <p>Get instant loan eligibility results</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-chart-pie feature-icon"></i>
+                <h3>Comprehensive Analysis</h3>
+                <p>Multiple bureau data integration</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="dashboard hidden" data-aos="fade-up">
+        <div class="container glass-effect">
+            <h2 class="welcome-text">Welcome, <span id="bankName">Bank</span>! <i class="fas fa-building bank-icon"></i></h2>
+            <div class="info-card">
+                <p><i class="fas fa-id-card"></i> Bank ID: <span id="bankId">---</span></p>
+                <p><i class="fas fa-envelope"></i> Admin/Bank Email: <span id="bankEmail">---</span></p>
+            </div>
+
+            <button onclick="navigate('credit-report')" class="btn glow-btn"><i class="fas fa-file-alt"></i> View Credit Report</button>
+
+            <h3 class="section-title"><i class="fas fa-users"></i> Customer Management</h3>
+            <button onclick="showCustomerSearch()" class="btn pulse-btn"><i class="fas fa-search"></i> Search Customer</button>
+
+            <div id="customerSearchForm" class="hidden search-form" data-aos="fade-in">
+                <h3 class="form-title">Enter Customer Details</h3>
+                <div class="input-group">
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="text" id="customerName" placeholder="Customer Name">
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-university input-icon"></i>
+                    <input type="text" id="customerAccount" placeholder="Customer Bank Account Number">
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-file-invoice input-icon"></i>
+                    <input type="text" id="loanId" placeholder="Loan Application ID">
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-rupee-sign input-icon"></i>
+                    <input type="text" id="loanAmount" placeholder="Loan Amount">
+                </div>
+                <button onclick="searchCustomer()" class="btn pulse-btn"><i class="fas fa-search"></i> Search</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="loan-eligibility hidden" data-aos="fade-up">
+        <div class="container glass-effect">
+            <h2 class="section-title"><i class="fas fa-check-circle"></i> Check Loan Eligibility</h2>
+            <p>Enter your details to check loan eligibility.</p>
+
+            <div class="input-group">
+                <i class="fas fa-user input-icon"></i>
+                <input type="text" id="loanCustomerName" placeholder="Customer Name">
+            </div>
+            <div class="input-group">
+                <i class="fas fa-university input-icon"></i>
+                <input type="text" id="loanCustomerAccount" placeholder="Customer Bank Account Number">
+            </div>
+            <div class="input-group">
+                <i class="fas fa-rupee-sign input-icon"></i>
+                <input type="number" id="loanAmountRequest" placeholder="Loan Amount (₹)">
+            </div>
+
+            <div class="button-group">
+                <button onclick="calculateLoanEligibility()" class="btn glow-btn"><i class="fas fa-calculator"></i> Check Eligibility</button>
+                <button onclick="downloadCreditReport()" class="btn pulse-btn"><i class="fas fa-download"></i> Download Report</button>
+            </div>
+
+            <div id="loanResult" class="hidden result-card" data-aos="zoom-in">
+                <h3 class="result-title"><i class="fas fa-chart-bar"></i> Loan Result</h3>
+                <div class="score-container">
+                    <div class="score-card">
+                        <div class="score-label">Experian</div>
+                        <div class="score-value" id="experianScore">-</div>
+                    </div>
+                    <div class="score-card">
+                        <div class="score-label">Equifax</div>
+                        <div class="score-value" id="equifaxScore">-</div>
+                    </div>
+                    <div class="score-card">
+                        <div class="score-label">TransUnion</div>
+                        <div class="score-value" id="transUnionScore">-</div>
+                    </div>
+                </div>
+                
+                <div class="final-score-container">
+                    <div class="final-score-label">Final Credit Score</div>
+                    <div class="final-score-value" id="creditScore">-</div>
+                </div>
+                
+                <p class="approval-text"><strong>Loan Approved:</strong> ₹<span id="approvedLoanAmount" style="display: none;"></span></p>
+                <p class="risk-text"><strong>Risk Factor:</strong> <span id="riskFactor"></span></p>
+                
+                <div class="risk-indicator-container">
+                    <div id="riskIndicator" class="risk-indicator"></div>
+                </div>
+                
+                <!-- Loan Approval Checkbox -->
+                <div id="approveLoanCheckbox" class="hidden approve-checkbox">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="loanApprovalCheck" onchange="toggleApprovedLoan()">
+                        <span class="checkmark"></span>
+                        Approve Loan
+                    </label>
+                </div>
+
+                <p id="serverNotice" class="notice-text"></p>
+                <button onclick="downloadCreditReport()" class="btn pulse-btn"><i class="fas fa-download"></i> Download Report</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="admin-dashboard hidden" data-aos="fade-up">
+        <div class="container glass-effect wide-container">
+            <h2 class="section-title"><i class="fas fa-user-shield"></i> Admin Panel</h2>
+            <p>Manage users and monitor credit risk.</p>
+
+            <div class="admin-header">
+                <h3><i class="fas fa-file-invoice-dollar"></i> Customer Loan Records</h3>
+                <p class="date-display">Date: <span id="currentDate"></span></p>
+            </div>
+
+            <div class="table-container">
+                <table id="customerTable" class="animated-table">
+                    <thead>
+                        <tr>
+                            <th>Customer Name</th>
+                            <th>Account Number</th>
+                            <th>Applied Loan Amount (₹)</th>
+                            <th>Credit Score</th>
+                            <th>Approved Loan (₹)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Customer data will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section class="customer-credit hidden" data-aos="fade-up">
+        <div class="container glass-effect">
+            <h2 class="section-title"><i class="fas fa-credit-card"></i> Enter Customer Details</h2>
+            <div class="input-group">
+                <i class="fas fa-user input-icon"></i>
+                <input type="text" id="customer-name" placeholder="Customer Name">
+            </div>
+            <div class="input-group">
+                <i class="fas fa-id-card input-icon"></i>
+                <input type="text" id="customer-id" placeholder="Unique ID Number">
+            </div>
+
+            <h3 class="subsection-title"><i class="fas fa-credit-card"></i> Credit Card Details</h3>
+            <div id="credit-cards" class="credit-cards-container"></div>
+            
+            <div class="button-group">
+                <button onclick="addCreditCard()" class="btn outline-btn"><i class="fas fa-plus-circle"></i> Add Another Card</button>
+                <button onclick="calculateTotalScore()" class="btn glow-btn"><i class="fas fa-calculator"></i> Calculate Credit Score</button>
+            </div>
+
+            <h3 class="subsection-title"><i class="fas fa-chart-line"></i> Customer Credit Score Summary</h3>
+            <div class="table-container">
+                <table id="credit-score-table" class="hidden animated-table">
+                    <thead>
+                        <tr>
+                            <th>Bank Name</th>
+                            <th>Card Type</th>
+                            <th>Experian</th>
+                            <th>Equifax</th>
+                            <th>TransUnion</th>
+                            <th>CIBIL</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="2"><strong>Grand Total</strong></td>
+                            <td id="experian-total">0</td>
+                            <td id="equifax-total">0</td>
+                            <td id="transunion-total">0</td>
+                            <td id="cibil-total">0</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section class="login hidden" data-aos="zoom-in">
+        <div class="container glass-effect">
+            <h2 class="section-title"><i class="fas fa-sign-in-alt"></i> Login</h2>
+            <div class="input-group">
+                <i class="fas fa-envelope input-icon"></i>
+                <input type="email" id="login-bank-email" placeholder="Bank Email">
+            </div>
+            <div class="input-group">
+                <i class="fas fa-id-card input-icon"></i>
+                <input type="text" id="login-bank-id" placeholder="Bank ID">
+            </div>
+            <div class="input-group">
+                <i class="fas fa-key input-icon"></i>
+                <input type="password" id="login-bank-passkey" placeholder="Bank Unique Passkey">
+            </div>
+            <button onclick="login()" class="btn glow-btn"><i class="fas fa-sign-in-alt"></i> Login</button>
+            <p class="switch-form">Don't have an account? <a href="#" onclick="navigate('signup')">Sign Up</a></p>
+        </div>
+    </section>
+
+    <section class="signup hidden" data-aos="zoom-in">
+        <div class="container glass-effect">
+            <h2 class="section-title"><i class="fas fa-user-plus"></i> Sign Up</h2>
+            <div class="input-group">
+                <i class="fas fa-building input-icon"></i>
+                <input type="text" id="signup-bank-name" placeholder="Bank Full Name">
+            </div>
+            <div class="input-group">
+                <i class="fas fa-envelope input-icon"></i>
+                <input type="email" id="signup-bank-email" placeholder="Bank Email / Admin Email">
+            </div>
+            <div class="input-group">
+                <i class="fas fa-key input-icon"></i>
+                <input type="password" id="signup-bank-passkey" placeholder="Create Unique Passkey">
+            </div>
+            <div class="input-group">
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" id="signup-confirm-passkey" placeholder="Confirm Passkey">
+            </div>
+            <button onclick="signup()" class="btn glow-btn"><i class="fas fa-user-plus"></i> Sign Up</button>
+            <p class="switch-form">Already have an account? <a href="#" onclick="navigate('login')">Login</a></p>
+        </div>
+    </section>
+
+    <section class="error-404 hidden" data-aos="zoom-in">
+        <div class="container glass-effect">
+            <h2 class="section-title"><i class="fas fa-exclamation-triangle"></i> 404 - Page Not Found</h2>
+            <p>The page you are looking for doesn't exist.</p>
+            <button onclick="navigate('landing')" class="btn pulse-btn"><i class="fas fa-home"></i> Go Home</button>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="logo.jpg" alt="Logo" class="footer-logo-img">
+                <p>Know Your Credit</p>
+            </div>
+            <div class="footer-links">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+            <p class="copyright">&copy; 2025 Heck Nexus. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            AOS.init({
+                duration: 800,
+                once: false
+            });
+            
+            // Toggle mobile menu
+            const hamburger = document.querySelector('.hamburger-menu');
+            const navMenu = document.querySelector('nav ul');
+            
+            if (hamburger) {
+                hamburger.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    navMenu.classList.toggle('show');
+                });
+            }
+        });
+    </script>
+    <script src="script.js"></script>
+</body>
+
+</html>
