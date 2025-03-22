@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>know your credit</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- AOS Library for Animations -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script>
+    AOS.init();
+</script>
+
+</head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+
+
+<body>
+    <img src="logo.jpg" alt="Logo" class="page-logo">
+    
+    
+
+    <nav>
+        <div class="watermark">
+            <img src="logo.jpg" alt="Watermark Logo">
+        </div>
+        <ul>
+            <li><a href="#" onclick="navigate('landing')">Home</a></li>
+            <li><a href="#" onclick="navigate('dashboard')">Dashboard</a></li>
+            <li><a href="#" onclick="navigate('loan-eligibility')">Loan Eligibility</a></li>
+            <li><a href="#" onclick="navigate('admin-dashboard')">Admin</a></li>
+            <li><a href="#" onclick="navigate('customer-credit')">Customer Credit</a></li>
+            <li><a href="#" onclick="navigate('help-desk')">Help Desk</a></li>
+
+        </ul>
+    </nav>
+    <section class="help-desk hidden">
+        <div class="container">
+            <h2>Help Desk</h2>
+            <p>Submit your query, and it will be sent to the support team.</p>
+            <form action="https://formspree.io/f/xjkywbke" method="POST">
+                <label>Your email:</label>
+                <input type="email" name="email" required>
+                <label>Your message:</label>
+                <textarea name="message" required></textarea>
+                <button type="submit">Send</button>
+            </form>
+        </div>
+    </section>
+
+
+    <section class="landing">
+        <h1>Smarter Credit Decisions</h1>
+        <p>Unify credit data from multiple bureaus and make informed lending decisions.</p>
+        <button onclick="navigate('login')">Login</button>
+        <button onclick="navigate('signup')">Sign Up</button>
+    </section>
+
+    <section class="dashboard hidden">
+        <h2>Welcome, <span id="bankName">Bank</span>!</h2>
+        <p>Bank ID: <span id="bankId">---</span></p>
+        <p>Admin/Bank Email: <span id="bankEmail">---</span></p>
+
+        <button onclick="navigate('credit-report')">View Credit Report</button>
+
+        <h3>Customer Management</h3>
+        <button onclick="showCustomerSearch()">Search Customer</button>
+
+        <div id="customerSearchForm" class="hidden">
+            <h3>Enter Customer Details</h3>
+            <input type="text" id="customerName" placeholder="Customer Name">
+            <input type="text" id="customerAccount" placeholder="Customer Bank Account Number">
+            <input type="text" id="loanId" placeholder="Loan Application ID">
+            <input type="text" id="loanAmount" placeholder="Loan Amount">
+            <button onclick="searchCustomer()">Search</button>
+        </div>
+    </section>
+
+
+
+
+
+    <section class="loan-eligibility hidden">
+        <h2>Check Loan Eligibility</h2>
+        <p>Enter your details to check loan eligibility.</p>
+
+        <input type="text" id="loanCustomerName" placeholder="Customer Name">
+        <input type="text" id="loanCustomerAccount" placeholder="Customer Bank Account Number">
+        <input type="number" id="loanAmountRequest" placeholder="Loan Amount (₹)">
+
+        <button onclick="calculateLoanEligibility()">Check Eligibility</button>
+        <button onclick="downloadCreditReport()">Download Report (PDF)</button>
+
+        <div id="loanResult" class="hidden">
+            <h3>Loan Result</h3>
+            <p><strong>Experian Score:</strong> <span id="experianScore"></span></p>
+            <p><strong>Equifax Score:</strong> <span id="equifaxScore"></span></p>
+            <p><strong>TransUnion Score:</strong> <span id="transUnionScore"></span></p>
+            <p><strong>Final Credit Score:</strong> <span id="creditScore"></span></p>
+            <p><strong>Loan Approved:</strong> ₹<span id="approvedLoanAmount" style="display: none;"></span></p>
+            <p><strong>Risk Factor:</strong> <span id="riskFactor"></span></p>
+            <div id="riskIndicator"></div>
+            <!-- Loan Approval Checkbox -->
+            <div id="approveLoanCheckbox" class="hidden">
+                <label>
+                    <input type="checkbox" id="loanApprovalCheck" onchange="toggleApprovedLoan()"> Approve Loan
+                </label>
+            </div>
+
+            <!-- ADD THIS BELOW -->
+            <p id="serverNotice" style="color: red; font-weight: bold;"></p>
+
+            <button onclick="downloadCreditReport()">Download Report (PDF)</button>
+        </div>
+
+
+    </section>
+
+    <section class="admin-dashboard hidden">
+        <h2>Admin Panel</h2>
+        <p>Manage users and monitor credit risk.</p>
+
+        <h3>Customer Loan Records</h3>
+        <p>Date: <span id="currentDate"></span></p>
+
+        <table id="customerTable">
+            <thead>
+                <tr>
+                    <th>Customer Name</th>
+                    <th>Account Number</th>
+                    <th>Applied Loan Amount (₹)</th>
+                    <th>Credit Score</th>
+                    <th>Approved Loan (₹)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Customer data will be inserted here -->
+            </tbody>
+        </table>
+    </section>
+    <section class="customer-credit hidden">
+        <div class="container">
+            <h2>Enter Customer Details</h2>
+            <input type="text" id="customer-name" placeholder="Customer Name">
+            <input type="text" id="customer-id" placeholder="Unique ID Number">
+
+            <h3>Credit Card Details</h3>
+            <div id="credit-cards"></div>
+            <button onclick="addCreditCard()">Add Another Card</button>
+            <button onclick="calculateTotalScore()">Calculate Credit Score</button>
+
+            <h3>Customer Credit Score Summary</h3>
+            <table id="credit-score-table" class="hidden">
+                <thead>
+                    <tr>
+                        <th>Bank Name</th>
+                        <th>Card Type</th>
+                        <th>Experian</th>
+                        <th>Equifax</th>
+                        <th>TransUnion</th>
+                        <th>CIBIL</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2"><strong>Grand Total</strong></td>
+                        <td id="experian-total">0</td>
+                        <td id="equifax-total">0</td>
+                        <td id="transunion-total">0</td>
+                        <td id="cibil-total">0</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </section>
+
+
+    <script>
+        function navigate(page) {
+            document.querySelectorAll('section').forEach(sec => sec.classList.add('hidden'));
+            const target = document.querySelector(`.${page}`);
+            if (target) {
+                target.classList.remove('hidden');
+            } else {
+                document.querySelector('.error-404').classList.remove('hidden');
+            }
+        }
+
+        function toggleApprovedLoan() {
+            const checkbox = document.getElementById("loanApprovalCheck");
+            const loanAmountDisplay = document.getElementById("approvedLoanAmount");
+
+            if (checkbox.checked) {
+                loanAmountDisplay.style.display = "block";
+            } else {
+                loanAmountDisplay.style.display = "none";
+            }
+        }
+
+        let customerData = [];
+
+        document.addEventListener("DOMContentLoaded", function () {
+            generateCustomerData();
+        });
+
+        function generateCustomerData() {
+            const customerNames = ["Aarav", "Vivaan", "Diya", "Ishaan", "Neha", "Aryan", "Kavya", "Rohan", "Sanya", "Tanish"];
+            const tableBody = document.querySelector("#customerTable tbody");
+            const currentDate = new Date().toLocaleDateString();
+            document.getElementById("currentDate").innerText = currentDate;
+
+            for (let i = 0; i < 50; i++) {
+                const name = customerNames[Math.floor(Math.random() * customerNames.length)];
+                const accountNumber = Math.floor(1000000000 + Math.random() * 9000000000);
+                const loanAmount = Math.floor(50000 + Math.random() * 950000);
+                const creditScore = Math.floor(300 + Math.random() * 700);
+                let approvedLoan;
+
+                if (creditScore >= 750) {
+                    approvedLoan = loanAmount;
+                } else if (creditScore >= 600) {
+                    approvedLoan = Math.round(loanAmount * 0.75);
+                } else if (creditScore >= 450) {
+                    approvedLoan = Math.round(loanAmount * 0.50);
+                } else {
+                    approvedLoan = Math.round(loanAmount * 0.25);
+                }
+
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${name}</td>
+                    <td>${accountNumber}</td>
+                    <td>₹${loanAmount.toLocaleString()}</td>
+                    <td class="${creditScore < 400 ? 'high-risk' : ''}">${creditScore}</td>
+                    <td>₹${approvedLoan.toLocaleString()}</td>
+                `;
+                tableBody.appendChild(row);
+
+                customerData.push({ name, accountNumber, loanAmount, creditScore, approvedLoan });
+            }
+        }
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            generateCustomerData();
+        });
+
+        function generateCustomerData() {
+            const customerNames = ["Aarav", "Vivaan", "Diya", "Ishaan", "Neha", "Aryan", "Kavya", "Rohan", "Sanya", "Tanish",
+                "Anika", "Kabir", "Mihir", "Suhana", "Reyansh", "Zoya", "Harshit", "Meera", "Dev", "Pihu",
+                "Nishant", "Simran", "Varun", "Nidhi", "Raghav", "Aisha", "Kunal", "Swati", "Yash", "Tia",
+                "Siddharth", "Priya", "Krishna", "Aditi", "Manish", "Shreya", "Gaurav", "Payal", "Rahul", "Sneha",
+                "Vikram", "Dhruv", "Bhavya", "Arnav", "Charvi", "Samar", "Ritika", "Atharv", "Mahima", "Rudra"];
+
+            const tableBody = document.querySelector("#customerTable tbody");
+            const currentDate = new Date().toLocaleDateString();
+            document.getElementById("currentDate").innerText = currentDate;
+
+            for (let i = 0; i < 50; i++) {
+                const name = customerNames[Math.floor(Math.random() * customerNames.length)];
+                const accountNumber = Math.floor(1000000000 + Math.random() * 9000000000); // Random 10-digit number
+                const loanAmount = Math.floor(50000 + Math.random() * 950000); // Loan between 50,000 and 1,000,000
+                const creditScore = Math.floor(300 + Math.random() * 700); // Credit score between 300 and 1000
+                let approvedLoan;
+
+                if (creditScore >= 750) {
+                    approvedLoan = loanAmount; // Full loan approved
+                } else if (creditScore >= 600) {
+                    approvedLoan = Math.round(loanAmount * 0.75); // 75% approved
+                } else if (creditScore >= 450) {
+                    approvedLoan = Math.round(loanAmount * 0.50); // 50% approved
+                } else {
+                    approvedLoan = Math.round(loanAmount * 0.25); // 25% approved
+                }
+
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${name}</td>
+                    <td>${accountNumber}</td>
+                    <td>₹${loanAmount.toLocaleString()}</td>
+                    <td class="${creditScore < 400 ? 'high-risk' : ''}">${creditScore}</td>
+                    <td>₹${approvedLoan.toLocaleString()}</td>
+                `;
+
+                tableBody.appendChild(row);
+            }
+        }
+    </script>
+
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .high-risk {
+            background-color: red;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+
+
+    <section class="login hidden">
+        <h2>Login</h2>
+        <input type="email" id="login-bank-email" placeholder="Bank Email">
+        <input type="text" id="login-bank-id" placeholder="Bank ID">
+        <input type="password" id="login-bank-passkey" placeholder="Bank Unique Passkey">
+        <button onclick="login()">Login</button>
+    </section>
+
+    <section class="signup hidden">
+        <h2>Sign Up</h2>
+        <input type="text" id="signup-bank-name" placeholder="Bank Full Name">
+        <input type="email" id="signup-bank-email" placeholder="Bank Email / Admin Email">
+        <input type="password" id="signup-bank-passkey" placeholder="Create Unique Passkey">
+        <input type="password" id="signup-confirm-passkey" placeholder="Confirm Passkey">
+        <button onclick="signup()">Sign Up</button>
+    </section>
+
+    <section class="error-404 hidden">
+        <h2>404 - Page Not Found</h2>
+        <p>The page you are looking for doesn't exist.</p>
+        <button onclick="navigate('landing')">Go Home</button>
+    </section>
+
+    <script>
+        function addCreditCard() {
+            let container = document.getElementById("credit-cards");
+            let newCard = document.createElement("div");
+            newCard.classList.add("credit-card");
+            newCard.innerHTML = `
+            <select class="bank-name">
+                <option value="">Select Bank</option>
+                <option value="HDFC">HDFC</option>
+                <option value="SBI">SBI</option>
+                <option value="ICICI">ICICI</option>
+                <option value="Axis Bank">Axis Bank</option>
+            </select>
+            <select class="card-type">
+                <option value="">Select Card Type</option>
+                <option value="Platinum">Platinum</option>
+                <option value="Gold">Gold</option>
+                <option value="Silver">Silver</option>
+            </select>
+        `;
+            container.appendChild(newCard);
+        }
+
+        function calculateTotalScore() {
+            let rows = document.querySelectorAll(".credit-card");
+            let tableBody = document.querySelector("#credit-score-table tbody");
+            let experianTotal = 0, equifaxTotal = 0, transunionTotal = 0, cibilTotal = 0;
+            tableBody.innerHTML = "";
+
+            rows.forEach(row => {
+                let bank = row.querySelector(".bank-name").value;
+                let type = row.querySelector(".card-type").value;
+                if (!bank || !type) return;
+
+                let experian = Math.floor(600 + Math.random() * 200);
+                let equifax = Math.floor(600 + Math.random() * 200);
+                let transunion = Math.floor(600 + Math.random() * 200);
+                let cibil = Math.floor(600 + Math.random() * 200);
+
+                experianTotal += experian;
+                equifaxTotal += equifax;
+                transunionTotal += transunion;
+                cibilTotal += cibil;
+
+                let tr = `
+                <tr>
+                    <td>${bank}</td>
+                    <td>${type}</td>
+                    <td>${experian}</td>
+                    <td>${equifax}</td>
+                    <td>${transunion}</td>
+                    <td>${cibil}</td>
+                </tr>
+            `;
+                tableBody.innerHTML += tr;
+            });
+
+            document.getElementById("experian-total").textContent = experianTotal;
+            document.getElementById("equifax-total").textContent = equifaxTotal;
+            document.getElementById("transunion-total").textContent = transunionTotal;
+            document.getElementById("cibil-total").textContent = cibilTotal;
+            document.getElementById("credit-score-table").classList.remove("hidden");
+        }
+
+        function navigate(page) {
+            document.querySelectorAll('section').forEach(sec => sec.classList.add('hidden'));
+            const target = document.querySelector(`.${page}`);
+            if (target) {
+                target.classList.remove('hidden');
+            } else {
+                document.querySelector('.error-404').classList.remove('hidden');
+            }
+        }
+
+        function calculateLoanEligibility() {
+            const requestedLoan = parseInt(document.getElementById('loanAmountRequest').value);
+            if (isNaN(requestedLoan) || requestedLoan <= 0) {
+                alert("Please enter a valid loan amount.");
+                return;
+            }
+
+            // Simulating Credit Bureaus and Possible Server Downtime
+            let bureaus = {
+                Experian: Math.random() < 0.8 ? Math.floor(Math.random() * 600) + 300 : null,
+                Equifax: Math.random() < 0.8 ? Math.floor(Math.random() * 600) + 300 : null,
+                TransUnion: Math.random() < 0.8 ? Math.floor(Math.random() * 600) + 300 : null
+            };
+
+            let activeBureaus = Object.values(bureaus).filter(score => score !== null);
+
+            let finalCreditScore = activeBureaus.length > 0
+                ? Math.round(activeBureaus.reduce((a, b) => a + b, 0) / activeBureaus.length)
+                : 300; // Default bad credit score if all are down
+            if (activeBureaus.length === 0) {
+                alert("All credit bureau servers are down. Unable to calculate credit score.");
+                return;
+            }
+
+
+            let riskLevel = "", riskColor = "", approvedLoan = 0;
+
+            if (finalCreditScore >= 750) {
+                approvedLoan = requestedLoan;
+                riskLevel = "Low Risk";
+                riskColor = "green";
+            } else if (finalCreditScore >= 600) {
+                approvedLoan = Math.round(requestedLoan * 0.75);
+                riskLevel = "Moderate Risk";
+                riskColor = "yellow";
+            } else if (finalCreditScore >= 450) {
+                approvedLoan = Math.round(requestedLoan * 0.50);
+                riskLevel = "High Risk";
+                riskColor = "orange";
+            } else {
+                approvedLoan = Math.round(requestedLoan * 0.25);
+                riskLevel = "Very High Risk";
+                riskColor = "red";
+            }
+
+            // Display results
+            document.getElementById('experianScore').innerText = bureaus.Experian ?? "Server Down";
+            document.getElementById('equifaxScore').innerText = bureaus.Equifax ?? "Server Down";
+            document.getElementById('transUnionScore').innerText = bureaus.TransUnion ?? "Server Down";
+            document.getElementById('creditScore').innerText = finalCreditScore;
+            document.getElementById('approvedLoan').innerText = approvedLoan;
+            document.getElementById('riskFactor').innerText = riskLevel;
+
+            let riskIndicator = document.getElementById('riskIndicator');
+            riskIndicator.style.backgroundColor = riskColor;
+
+            document.getElementById('loanResult').classList.remove('hidden');
+        }
+        function downloadCreditReport() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(18);
+            doc.text("Loan Eligibility Report", 60, 15);
+
+            const loanCustomerName = document.getElementById("loanCustomerName").value || "N/A";
+            const loanCustomerAccount = document.getElementById("loanCustomerAccount").value || "N/A";
+            const loanAmountRequest = document.getElementById("loanAmountRequest").value || "N/A";
+
+            const experianScore = document.getElementById("experianScore").innerText;
+            const equifaxScore = document.getElementById("equifaxScore").innerText;
+            const transUnionScore = document.getElementById("transUnionScore").innerText;
+            const creditScore = document.getElementById("creditScore").innerText;
+            const approvedLoanAmount = document.getElementById("approvedLoanAmount").innerText;
+            const riskFactor = document.getElementById("riskFactor").innerText;
+            const serverNotice = document.getElementById("serverNotice").innerText || "All bureau servers are active.";
+
+            // Define table data
+            const tableData = [
+                ["Customer Name", loanCustomerName],
+                ["Account Number", loanCustomerAccount],
+                ["Applied Loan (₹)", loanAmountRequest],
+                ["Experian Score", experianScore],
+                ["Equifax Score", equifaxScore],
+                ["TransUnion Score", transUnionScore],
+                ["Final Credit Score", creditScore],
+                ["Approved Loan (₹)", approvedLoanAmount],
+                ["Risk Factor", riskFactor]
+            ];
+
+            // Display warning if a credit bureau server is down
+            if (serverNotice.includes("down")) {
+                doc.setFontSize(12);
+                doc.setTextColor(255, 0, 0); // Red color for warning
+                doc.text(`⚠️ ${serverNotice}`, 20, 30);
+                doc.setTextColor(0, 0, 0); // Reset text color
+            }
+
+            // Generate a table with the data
+            doc.autoTable({
+                startY: serverNotice.includes("down") ? 40 : 30,
+                head: [["Field", "Value"]],
+                body: tableData,
+                theme: "grid",
+                styles: { fontSize: 12, cellPadding: 3 }
+            });
+
+            // Add Bank Manager Signature
+            doc.text("_____________________", 20, doc.autoTable.previous.finalY + 20);
+            doc.text("Bank Manager Signature", 20, doc.autoTable.previous.finalY + 30);
+
+            doc.save("Loan_Report.pdf");
+
+
+        }
+
+        src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
+
+
+        function navigate(page) {
+            document.querySelectorAll('section').forEach(sec => sec.classList.add('hidden'));
+            const target = document.querySelector(`.${page}`);
+            if (target) {
+                target.classList.remove('hidden');
+            } else {
+                document.querySelector('.error-404').classList.remove('hidden');
+            }
+        }
+
+        function login() {
+            const bankName = "Your Bank";
+            const bankId = document.getElementById('login-bank-id').value;
+            const bankEmail = document.getElementById('login-bank-email').value;
+
+            if (bankId && bankEmail) {
+                localStorage.setItem("bankName", bankName);
+                localStorage.setItem("bankId", bankId);
+                localStorage.setItem("bankEmail", bankEmail);
+                navigate('dashboard');
+            } else {
+                alert("Please enter valid login details.");
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            if (localStorage.getItem("bankId")) {
+                document.getElementById('bankName').textContent = localStorage.getItem("bankName");
+                document.getElementById('bankId').textContent = localStorage.getItem("bankId");
+                document.getElementById('bankEmail').textContent = localStorage.getItem("bankEmail");
+                navigate('dashboard');
+            }
+        });
+
+
+        function signup() {
+            const bankName = document.getElementById('signup-bank-name').value;
+            const bankEmail = document.getElementById('signup-bank-email').value;
+            const passkey = document.getElementById('signup-bank-passkey').value;
+            const confirmPasskey = document.getElementById('signup-confirm-passkey').value;
+
+            if (!bankName || !bankEmail || !passkey || !confirmPasskey) {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            if (passkey !== confirmPasskey) {
+                alert("Passkeys do not match!");
+                return;
+            }
+
+            alert(`Signup Successful for ${bankName}!`);
+            navigate('login');
+        }
+
+
+        function showCustomerSearch() {
+            let form = document.getElementById('customerSearchForm');
+            if (form.classList.contains('hidden')) {
+                form.classList.remove('hidden');
+            } else {
+                form.classList.add('hidden');
+            }
+        }
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            let doc = new jsPDF();
+            let name = document.getElementById("username").value;
+            let scoreText = document.getElementById("result").innerText;
+            doc.text("Credit Report", 10, 10);
+            doc.text(`Name: ${name}`, 10, 20);
+            doc.text(scoreText, 10, 30);
+            doc.save("Credit_Report.pdf");
+        }
+
+        function searchCustomer() {
+            const name = document.getElementById('customerName').value;
+            const account = document.getElementById('customerAccount').value;
+            const loanId = document.getElementById('loanId').value;
+            const amount = document.getElementById('loanAmount').value;
+
+            if (name && account && loanId && amount) {
+                alert(`Searching for customer:\nName: ${name}\nAccount: ${account}\nLoan ID: ${loanId}\nLoan Amount: ${amount}`);
+            } else {
+                alert("Please enter all customer details.");
+            }
+        }
+
+
+        function connectBureau(name) {
+            alert(`${name} connected successfully!`);
+        }
+        function calculateLoanEligibility() {
+            const requestedLoan = parseInt(document.getElementById('loanAmountRequest').value);
+            if (isNaN(requestedLoan) || requestedLoan <= 0) {
+                alert("Please enter a valid loan amount.");
+                return;
+            }
+
+            // Define bureaus and their scores
+            let bureaus = {
+                CIBIL: Math.floor(Math.random() * 600) + 300,
+                CRIF: Math.floor(Math.random() * 600) + 300,
+                EQUIFAX: Math.floor(Math.random() * 600) + 300,
+                EXPERIAN: Math.floor(Math.random() * 600) + 300
+            };
+
+            // Randomly shut down between 0 and 3 servers
+            let serversToShutDown = Math.floor(Math.random() * 4);
+            let bureauNames = Object.keys(bureaus);
+            let downBureaus = [];
+
+            for (let i = 0; i < serversToShutDown; i++) {
+                let index = Math.floor(Math.random() * bureauNames.length);
+                downBureaus.push(bureauNames[index]);
+                delete bureaus[bureauNames[index]]; // Remove from calculation
+                bureauNames.splice(index, 1);
+            }
+
+            let finalCreditScore = 0;
+            let approvedLoan = 0;
+            let riskLevel = "";
+            let riskColor = "gray";
+
+            if (Object.keys(bureaus).length === 0) {
+                // If all servers are down, use default values
+                finalCreditScore = 300;
+                approvedLoan = 0;
+                riskLevel = "Unknown Risk";
+                document.getElementById('serverNotice').innerText = "⚠️ All bureau servers are down. Default credit score applied.";
+            } else {
+                // Adjust weight dynamically
+                let weightage = {
+                    CIBIL: 0.4,
+                    CRIF: 0.2,
+                    EQUIFAX: 0.2,
+                    EXPERIAN: 0.2
+                };
+
+                let activeBureaus = Object.keys(bureaus);
+                let totalWeight = activeBureaus.reduce((sum, bureau) => sum + weightage[bureau], 0);
+
+                // Calculate weighted credit score
+                activeBureaus.forEach(bureau => {
+                    finalCreditScore += bureaus[bureau] * (weightage[bureau] / totalWeight);
+                });
+
+                finalCreditScore = Math.round(finalCreditScore);
+
+                // Determine loan approval
+                if (finalCreditScore >= 750) {
+                    approvedLoan = requestedLoan;
+                    riskLevel = "Low Risk";
+                    riskColor = "green";
+                } else if (finalCreditScore >= 600) {
+                    approvedLoan = Math.round(requestedLoan * 0.75);
+                    riskLevel = "Moderate Risk";
+                    riskColor = "yellow";
+                } else if (finalCreditScore >= 450) {
+                    approvedLoan = Math.round(requestedLoan * 0.50);
+                    riskLevel = "High Risk";
+                    riskColor = "orange";
+                } else {
+                    approvedLoan = Math.round(requestedLoan * 0.25);
+                    riskLevel = "Very High Risk";
+                    riskColor = "red";
+                }
+            }
+
+            // Display results
+            document.getElementById('experianScore').innerText = bureaus.EXPERIAN ?? "Server Down";
+            document.getElementById('equifaxScore').innerText = bureaus.EQUIFAX ?? "Server Down";
+            document.getElementById('transUnionScore').innerText = bureaus.CRIF ?? "Server Down";
+            document.getElementById('creditScore').innerText = finalCreditScore;
+            document.getElementById('approvedLoanAmount').innerText = approvedLoan;
+            document.getElementById('riskFactor').innerText = riskLevel;
+
+            // Show which servers are down
+            if (downBureaus.length > 0) {
+                document.getElementById('serverNotice').innerText = `⚠️ The following bureaus are down: ${downBureaus.join(", ")}. Their scores are not included.`;
+            } else {
+                document.getElementById('serverNotice').innerText = "✅ All credit bureaus are active.";
+            }
+
+            document.getElementById('loanResult').classList.remove('hidden');
+            document.getElementById('approveLoanCheckbox').classList.remove('hidden');
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 50%;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: auto;
+        }
+
+        input,
+        button {
+            width: 80%;
+            padding: 10px;
+            margin: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        nav {
+            background: #007bff;
+            padding: 10px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-right: 10px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+
+        section {
+            background: white;
+            padding: 20px;
+            margin: 20px auto;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.5s ease-in-out;
+        }
+
+        section:not(.hidden) {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .customer-credit .container {
+            background: white;
+            padding: 20px;
+            margin: 20px auto;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .customer-credit input,
+        .customer-credit select {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .customer-credit button {
+            background: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .customer-credit button:hover {
+            background: #0056b3;
+        }
+
+        .customer-credit table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        .customer-credit th,
+        .customer-credit td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .customer-credit th {
+            background: #007bff;
+            color: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+        .page-logo {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 100px; /* Adjust size as needed */
+    opacity: 0.9; /* Slight transparency */
+    z-index: 1000;
+}
+footer {
+    text-align: center;
+    padding: 10px;
+    background: #222;
+    color: white;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+.watermark {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    opacity: 0.05;  /* Makes it lightly visible */
+    z-index: -1; /* Keeps it behind the content */
+    pointer-events: none; /* Prevents user interaction */
+}
+
+.watermark img {
+    width: 100px;  /* Adjust width to a smaller size */
+    height: auto; /* Maintain aspect ratio */
+    max-width: 10%; /* Ensures it scales well on different screens */
+}
+
+
+    </style>
+    <footer>
+        <p>&copy; 2025 Heck Nexus. All rights reserved.</p>
+    </footer>
+    
+</body>
+
+</html>
